@@ -46,7 +46,31 @@ Data will be scoped per user, and will contain the following table information.
 
 Here are some high level api overviews:
 - /auth/: Authorization of the user within the system to grant a short lived token to be used with apis. Supports periodic refresh of the token as best practices would dictate.
-- /bio/: CRUD of biological data about a user that they may track. For now, we'll implement just /bio/weight/.
+- /user/: Used for user authentication. Employs the typical auth/deauth/reauth actions you might expect.
+- /user/bio: CRUD of biological data about a user that they may track. For now, we'll implement just /user/weight/.
 - /workout: CRUD of workout related data. This will include registration and management of new workout types, recording of sets.
 
+Here are some databse definitions:
+1. User
+- user_id (uuid)
+- whatever else is necessary
+2. Exercise
+- exercise_id (uuid)
+- name
+- measurement (weight/rep/time)
+- interface (dumbbell/barbell/cable/bodyweight/plate/kettlebell)
+- muscle_group (arms/back/chest/shoulders/legs/core)
+- muscle_subgroup (bicep/tricep/lats/lower_back/quads/calves/upper_core/lower_core/obliques)
+- description
+- form notes (array of string)
+3. Sets
+- set_id (uuid)
+- user_id
+- exercise_id
+- date
+- reps (nullable)
+- weight (nullable)
+- time (nullable)
+- Notes
 
+The enums that are created for these database tables (e.g. muscle_group/subgroup) should encode the db name in the table and the human readable name in their entries.

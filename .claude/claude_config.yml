@@ -1,0 +1,36 @@
+project:
+  name: workouts-build
+  description: Build and deployment orchestration for the Workouts application
+  type: monorepo-orchestrator
+
+repositories:
+  build:
+    path: .
+    description: Top-level build/deploy scripts and Docker orchestration
+  frontend:
+    path: workouts-frontend
+    description: Vite + React frontend application
+  backend:
+    path: workouts-backend
+    description: Ktor (Kotlin) backend server
+
+tech_stack:
+  frontend:
+    framework: Vite + React
+    language: TypeScript
+  backend:
+    framework: Ktor
+    language: Kotlin
+    database: PostgreSQL
+  infrastructure:
+    containerization: Docker
+    reverse_proxy: Traefik
+    platforms:
+      - WSL on Windows
+      - Ubuntu
+      - MacOS
+
+context_files:
+  - .claude/context.md
+  - .claude/instructions.md
+  - .claude/tone.md
