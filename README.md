@@ -12,4 +12,4 @@ The two child repositories should be cloned into this folder. They are ignored i
 This repository will build them and deploy them either locally for development or in a docker environment for production.
 
 ### Claude 
-The `.claude` directory contains instructions for claude to work on both of the child repositories. 
+The `.claude` directory contains instructions for claude to work on both of the child repositories.

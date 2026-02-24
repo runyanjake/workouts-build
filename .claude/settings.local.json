@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(powershell.exe -Command \"go version\")"
+      "Bash(powershell.exe -Command \"go version\")",
+      "Bash(powershell.exe -Command:*)"
     ]
   }
 }
