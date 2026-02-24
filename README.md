@@ -13,3 +13,36 @@ This repository will build them and deploy them either locally for development o
 
 ### Claude 
 The `.claude` directory contains instructions for claude to work on both of the child repositories.
+
+## Deployment 
+
+### Local
+
+#### 1. Services Start
+Start Postgres and Redis using the dockerfile in the main repos.
+```bash
+docker compose down
+docker volume rm workouts-build_postgres_data && docker volume rm workouts-build_postgres_data
+docker compose up -d
+```
+
+#### 2. Backend Start
+Start the backend which will configure Postgres tables.
+```bash
+go run main.go
+```
+
+If you need to use test data, load it using the utility under `scripts/`:
+```bash
+go run script/seed-test-data/
+```
+
+#### 3. Frontend Start
+Start the frontend dev server through Node:
+```bash
+npm run dev
+```
+
+
+### Production
+TODO

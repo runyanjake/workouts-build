@@ -56,7 +56,7 @@ PostgreSQL + Redis
 ## Infrastructure
 
 - **Local dev:** `docker compose up -d` starts Postgres (port 5432) and Redis (port 6379)
-- **Schema:** `db/init.sql` — `users`, `weight_entries`, `exercises`, `workouts`, `sets` tables
+- **Schema:** `sql/init.sql` — `users`, `weight_entries`, `exercises`, `workouts`, `sets` tables
 - **Env vars:** `DATABASE_URL`, `REDIS_URL`, `JWT_SECRET`, `PORT` (all have sane defaults for local dev)
 - **Credentials:** `.env` at the build repo root (gitignored)
 
