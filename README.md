@@ -22,7 +22,7 @@ The `.claude` directory contains instructions for claude to work on both of the 
 Start Postgres and Redis using the dockerfile in the main repos.
 ```bash
 docker compose down
-docker volume rm workouts-build_postgres_data && docker volume rm workouts-build_postgres_data
+docker volume rm workouts-build_postgres_data workouts-build_postgres_data
 docker compose up -d
 ```
 
