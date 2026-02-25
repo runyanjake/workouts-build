@@ -1,5 +1,5 @@
-# Development compose — all services with hot reload and exposed ports.
-# Usage: docker compose up [--build]
+# Development compose — all services with hot reload, exposed ports, and test data.
+# Usage: docker compose -f docker-compose.dev.yml up [--build]
 #
 # Access:
 #   Frontend (Vite dev server): http://localhost:5173
@@ -58,10 +58,41 @@ services:
       - go_pkg_cache:/go/pkg/mod
     ports:
       - "8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
     depends_on:
       postgres:
         condition: service_healthy
       redis:
+        condition: service_healthy
+    networks:
+      - internal
+
+  db-seed:
+    image: postgres:17
+    container_name: workouts-db-seed
+    restart: "no"
+    environment:
+      PGHOST: postgres
+      PGUSER: ${POSTGRES_USER:-workouts}
+      PGPASSWORD: ${POSTGRES_PASSWORD:-workouts}
+      PGDATABASE: ${POSTGRES_DB:-workouts}
+    volumes:
+      - ./workouts-backend/sql/test-data:/seed:ro
+    command: >
+      bash -c "
+        psql -f /seed/0001_test_users.sql &&
+        psql -f /seed/0002_test_weight_entries.sql &&
+        psql -f /seed/0003_test_exercises.sql &&
+        psql -f /seed/0004_test_workouts.sql &&
+        psql -f /seed/0005_test_sets.sql
+      "
+    depends_on:
+      backend:
         condition: service_healthy
     networks:
       - internal
@@ -79,7 +110,8 @@ services:
     ports:
       - "5173:5173"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - internal
 

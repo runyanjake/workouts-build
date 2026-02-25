@@ -17,7 +17,6 @@ The `.claude` directory contains instructions for claude to work on both of the 
 ## Deployment 
 
 ### Local, By Parts
-
 #### 1. Services Start
 Start Postgres and Redis using the dockerfile in the main repos.
 ```bash
@@ -25,30 +24,27 @@ docker compose down
 docker volume rm workouts-build_postgres_data workouts-build_postgres_data
 docker compose up -d
 ```
-
 #### 2. Backend Start
 Start the backend which will configure Postgres tables.
 ```bash
 go run main.go
 ```
-
 If you need to use test data, load it using the utility under `scripts/`:
 ```bash
 go run script/seed-test-data/
 ```
-
 #### 3. Frontend Start
 Start the frontend dev server through Node:
 ```bash
 npm run dev
 ```
 
-### Local, All-In-One
+### Local (Windows), All-In-One
 ```bash
-docker compose up -d --build
+docker compose -f docker-compose.dev.yml down ; docker volume rm workouts_postgres_data workouts_redis_data ; docker system prune ; docker compose -f docker-compose.dev.yml up -d
 ```
 
-### Production
+### Production (Unix), All-In-One
 ```bash
-docker compose down &&  docker volume rm workouts_postgres_data workouts_redis_data && docker system prune && docker compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.dev.yml down && docker volume rm workouts_postgres_data workouts_redis_data && docker system prune && docker compose -f docker-compose.prod.yml up -d
 ```
