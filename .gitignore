@@ -1,5 +1,4 @@
 workouts-frontend/
 workouts-backend/
 .env
-docker-compose.prod.yml
 
