@@ -50,5 +50,5 @@ docker compose up -d --build
 
 ### Production
 ```bash
-docker compose -f docker-compose.prod.yml up -d
+docker compose down &&  docker volume rm workouts_postgres_data workouts_redis_data && docker system prune && docker compose -f docker-compose.prod.yml up -d
 ```
