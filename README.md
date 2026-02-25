@@ -16,7 +16,7 @@ The `.claude` directory contains instructions for claude to work on both of the 
 
 ## Deployment 
 
-### Local
+### Local, By Parts
 
 #### 1. Services Start
 Start Postgres and Redis using the dockerfile in the main repos.
@@ -43,6 +43,12 @@ Start the frontend dev server through Node:
 npm run dev
 ```
 
+### Local, All-In-One
+```bash
+docker compose up -d --build
+```
 
 ### Production
-TODO
+```bash
+docker compose -f docker-compose.prod.yml up -d
+```

@@ -1,0 +1,103 @@
+# Production compose — optimised builds, no exposed ports, Traefik routing.
+# Usage: docker compose -f docker-compose.prod.yml up -d [--build]
+#
+# Required env vars (set in .env or the shell):
+#   POSTGRES_PASSWORD  — database password
+#   JWT_SECRET         — long random string for signing JWTs
+#   APP_DOMAIN         — public hostname, e.g. workouts.example.com
+#
+# Traefik notes:
+#   - Requires an external Docker network named "traefik" managed by your
+#     Traefik instance.
+#   - TLS cert resolver is named "letsencrypt" — adjust if yours differs.
+#   - HTTP→HTTPS redirect is assumed to be handled globally by Traefik.
+name: workouts
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: workouts-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-workouts}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:-workouts}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-workouts}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    container_name: workouts-redis
+    restart: unless-stopped
+    command: ["redis-server", "--save", "60", "1"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis_data:/data
+
+  backend:
+    build:
+      context: ./workouts-backend
+      target: prod
+    container_name: workouts-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-workouts}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-workouts}?sslmode=disable
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      PORT: "8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - default
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      # API router — higher priority than the frontend catch-all
+      - "traefik.http.routers.workouts-api.rule=Host(`${APP_DOMAIN:?APP_DOMAIN is required}`) && (PathPrefix(`/auth`) || PathPrefix(`/api`) || PathPrefix(`/user`) || PathPrefix(`/workout`) || PathPrefix(`/exercise`) || PathPrefix(`/analytics`) || PathPrefix(`/health`) || PathPrefix(`/sync`))"
+      - "traefik.http.routers.workouts-api.entrypoints=websecure"
+      - "traefik.http.routers.workouts-api.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.workouts-api.priority=10"
+      - "traefik.http.services.workouts-api.loadbalancer.server.port=8080"
+
+  frontend:
+    build:
+      context: ./workouts-frontend
+      target: prod
+    container_name: workouts-frontend
+    restart: unless-stopped
+    networks:
+      - default
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      # Catch-all for the domain — serves the SPA
+      - "traefik.http.routers.workouts.rule=Host(`${APP_DOMAIN}`)"
+      - "traefik.http.routers.workouts.entrypoints=websecure"
+      - "traefik.http.routers.workouts.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.workouts.priority=1"
+      - "traefik.http.services.workouts.loadbalancer.server.port=80"
+
+networks:
+  # Compose auto-creates this; declaring it explicitly so services can
+  # reference both "default" and "traefik" in their networks list.
+  default: {}
+  traefik:
+    external: true
+
+volumes:
+  postgres_data:
+  redis_data:
