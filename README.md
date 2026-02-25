@@ -39,12 +39,19 @@ Start the frontend dev server through Node:
 npm run dev
 ```
 
-### Local (Windows), All-In-One
+### Local (Windows), All-In-One **(WARNING: Clears Data)**
 ```bash
 docker compose -f docker-compose.dev.yml down ; docker volume rm workouts_postgres_data workouts_redis_data ; docker system prune ; docker compose -f docker-compose.dev.yml up -d
 ```
 
 ### Production (Unix), All-In-One
+
+- Rebuild
 ```bash
-docker compose -f docker-compose.dev.yml down && docker volume rm workouts_postgres_data workouts_redis_data && docker system prune && docker compose -f docker-compose.prod.yml up -d
+docker system prune && docker compose -f docker-compose.prod.yml up -d --build
+```
+
+- Full Clean **(WARNING: Clears Data)**
+```bash
+docker compose -f docker-compose.prod.yml down && docker volume rm workouts_postgres_data workouts_redis_data && docker system prune && docker compose -f docker-compose.prod.yml up -d --build
 ```
