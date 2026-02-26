@@ -1,8 +1,6 @@
 {
   "permissions": {
     "allow": [
-      "Bash(powershell.exe -Command \"go version\")",
-      "Bash(powershell.exe -Command:*)",
       "Bash(npm run build)"
     ]
   }
