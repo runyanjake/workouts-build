@@ -48,7 +48,7 @@ docker compose -f docker-compose.dev.yml down ; docker volume rm workouts_postgr
 
 - Rebuild
 ```bash
-docker compose down && docker system prune && docker compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml down && docker system prune && docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 - Full Clean **(WARNING: Clears Data)**
