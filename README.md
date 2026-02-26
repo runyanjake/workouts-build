@@ -53,5 +53,5 @@ docker compose -f docker-compose.prod.yml down && docker system prune && docker 
 
 - Full Clean **(WARNING: Clears Data)**
 ```bash
-docker compose -f docker-compose.prod.yml down && sudo rm -r /pwspool/software/workouts && docker system prune && docker compose -f docker-compose.prod.yml up -d --build
+false && docker compose -f docker-compose.prod.yml down && sudo rm -r /pwspool/software/workouts && docker system prune && docker compose -f docker-compose.prod.yml up -d --build
 ```
