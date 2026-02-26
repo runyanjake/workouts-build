@@ -66,14 +66,6 @@ services:
         condition: service_healthy
     networks:
       - default
-      - traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.workouts-api.rule=Host(`${APP_DOMAIN:?APP_DOMAIN is required}`) && (PathPrefix(`/auth`) || PathPrefix(`/api`) || PathPrefix(`/user`) || PathPrefix(`/workout`) || PathPrefix(`/exercise`) || PathPrefix(`/analytics`) || PathPrefix(`/health`) || PathPrefix(`/sync`))"
-      - "traefik.http.routers.workouts-api.entrypoints=websecure"
-      - "traefik.http.routers.workouts-api.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.workouts-api.priority=10"
-      - "traefik.http.services.workouts-api.loadbalancer.server.port=8080"
 
   frontend:
     build:
@@ -90,5 +82,4 @@ services:
       - "traefik.http.routers.workouts.rule=Host(`${APP_DOMAIN}`)"
       - "traefik.http.routers.workouts.entrypoints=websecure"
       - "traefik.http.routers.workouts.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.workouts.priority=1"
       - "traefik.http.services.workouts.loadbalancer.server.port=80"
