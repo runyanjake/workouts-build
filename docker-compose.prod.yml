@@ -4,7 +4,7 @@
 # Required env vars (set in .env or the shell):
 #   POSTGRES_PASSWORD  — database password
 #   JWT_SECRET         — long random string for signing JWTs
-#   APP_DOMAIN         — public hostname, e.g. workouts.example.com
+#   APP_DOMAIN         — public hostname, e.g. workouts.example.com (used for Traefik routing and share link URLs)
 #
 # Traefik notes:
 #   - Requires an external Docker network named "traefik" managed by your
@@ -39,7 +39,7 @@ services:
     image: redis:7
     container_name: workouts-redis
     restart: unless-stopped
-    command: ["redis-server", "--save", "60", "1"]
+    command: ["redis-server", "--save", "60", "1", "--appendonly", "yes"]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -58,6 +58,7 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER:-workouts}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-workouts}?sslmode=disable
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      APP_URL: https://${APP_DOMAIN:?APP_DOMAIN is required}
       PORT: "8080"
     depends_on:
       postgres:
