@@ -29,6 +29,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-workouts}
     volumes:
       - /pwspool/software/workouts/db/data:/var/lib/postgresql/data
+      - /pwspool/software/workouts/db/dump:/etc/dump
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-workouts}"]
       interval: 5s

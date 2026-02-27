@@ -1,8 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run build)",
-      "Bash(powershell.exe -Command \"npm run build 2>&1\")"
+      "Bash(powershell.exe -Command \"npm run build 2>&1\")",
+      "Bash(powershell.exe -Command \"go build ./...\")"
     ]
   }
 }

@@ -39,9 +39,9 @@ Start the frontend dev server through Node:
 npm run dev
 ```
 
-### Local (Windows), All-In-One **(WARNING: Clears Data)**
+### Local (Windows), All-In-One **(WARNING: Clears Node/Application Data)**
 ```bash
-docker compose -f docker-compose.dev.yml down ; docker volume rm workouts_postgres_data workouts_redis_data ; docker system prune ; docker compose -f docker-compose.dev.yml up -d
+docker compose -f docker-compose.dev.yml down ; docker volume rm workouts_postgres_data workouts_redis_data workouts_frontend_node_modules ; docker system prune ; docker compose -f docker-compose.dev.yml up -d --build
 ```
 
 ### Production (Unix), All-In-One
@@ -54,4 +54,10 @@ docker compose -f docker-compose.prod.yml down && docker system prune && docker 
 - Full Clean **(WARNING: Clears Data)**
 ```bash
 false && docker compose -f docker-compose.prod.yml down && sudo rm -r /pwspool/software/workouts && docker system prune && docker compose -f docker-compose.prod.yml up -d --build
+```
+
+- Take a Database Dump
+Dumps live in `/etc/dump` on the postgres container which is linked to `/pwspool/software/workouts/db/dump`. Take them with
+```bash
+pg_dump -U username -d dbname > /etc/dump/dump.sql
 ```
