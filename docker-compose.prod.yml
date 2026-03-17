@@ -35,6 +35,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    labels:
+      - traefik.enable=false
 
   redis:
     image: redis:7
@@ -48,6 +50,8 @@ services:
       retries: 5
     volumes:
       - /pwspool/software/workouts/redis/data:/data
+    labels:
+      - traefik.enable=false
 
   backend:
     build:
@@ -68,6 +72,8 @@ services:
         condition: service_healthy
     networks:
       - default
+    labels:
+      - traefik.enable=false
 
   frontend:
     build:
@@ -83,5 +89,5 @@ services:
       - "traefik.docker.network=traefik"
       - "traefik.http.routers.workouts.rule=Host(`${APP_DOMAIN}`)"
       - "traefik.http.routers.workouts.entrypoints=websecure"
-      - "traefik.http.routers.workouts.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.workouts.tls.certresolver=lets-encrypt"
       - "traefik.http.services.workouts.loadbalancer.server.port=80"
